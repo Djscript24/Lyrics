@@ -1,0 +1,1816 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="theme-color"
+      content="#111019"
+    />
+    <title>Penyihir - Ghea Indrawari</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: #111019;
+        color: #f7f4ff;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        --muted: #a7a1b5;
+        --purple: #b7a0ff;
+        --panel: rgba(31, 28, 43, 0.82);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        overflow-x: hidden;
+        background:
+          radial-gradient(ellipse at 18% 0%, rgba(108, 78, 185, 0.24), transparent 38rem),
+          radial-gradient(ellipse at 100% 70%, rgba(50, 93, 120, 0.12), transparent 34rem),
+          #111019;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .page {
+        width: min(1120px, calc(100% - 48px));
+        margin: 0 auto;
+        padding: 34px 0 48px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 48px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        color: #f7f4ff;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border: 1px solid rgba(202, 185, 255, 0.24);
+        border-radius: 12px;
+        background: rgba(183, 160, 255, 0.12);
+        color: var(--purple);
+      }
+
+      .collection {
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 28px;
+        align-items: stretch;
+      }
+
+      .player-card,
+      .lyrics-card {
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 26px;
+        background: var(--panel);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+        backdrop-filter: blur(18px);
+      }
+
+      .player-card {
+        display: flex;
+        flex-direction: column;
+        padding: 30px;
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: var(--purple);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.17em;
+        text-transform: uppercase;
+      }
+
+      .artwork {
+        position: relative;
+        display: grid;
+        width: 100%;
+        aspect-ratio: 1;
+        max-height: 340px;
+        margin: 25px auto 28px;
+        overflow: hidden;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 22px;
+        background:
+          radial-gradient(circle at 50% 46%, rgba(255, 255, 255, 0.15), transparent 18%),
+          radial-gradient(ellipse at 25% 80%, rgba(94, 195, 190, 0.55), transparent 42%),
+          radial-gradient(ellipse at 80% 18%, rgba(172, 119, 255, 0.7), transparent 45%),
+          linear-gradient(145deg, #332852, #171626 68%);
+      }
+
+      .artwork::before,
+      .artwork::after {
+        position: absolute;
+        width: 72%;
+        aspect-ratio: 1;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        content: "";
+        transform: rotate(-24deg) scaleY(0.52);
+      }
+
+      .artwork::after {
+        width: 54%;
+        border-color: rgba(220, 207, 255, 0.35);
+        transform: rotate(38deg) scaleY(0.52);
+      }
+
+      .artwork-note {
+        position: absolute;
+        right: 18px;
+        bottom: 17px;
+        color: rgba(255, 255, 255, 0.72);
+        font-size: 10px;
+        letter-spacing: 0.17em;
+        text-transform: uppercase;
+      }
+
+      .track-title {
+        margin: 0;
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 700;
+        letter-spacing: -0.045em;
+        line-height: 1.15;
+      }
+
+      .track-subtitle {
+        margin: 9px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .timeline {
+        margin-top: 30px;
+      }
+
+      .seek {
+        display: block;
+        width: 100%;
+        height: 5px;
+        margin: 0;
+        appearance: none;
+        border-radius: 99px;
+        background: linear-gradient(
+          to right,
+          var(--purple) 0%,
+          var(--purple) var(--progress, 0%),
+          rgba(255, 255, 255, 0.15) var(--progress, 0%),
+          rgba(255, 255, 255, 0.15) 100%
+        );
+        cursor: pointer;
+      }
+
+      .seek::-webkit-slider-thumb {
+        width: 12px;
+        height: 12px;
+        appearance: none;
+        border: 0;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(183, 160, 255, 0.18);
+      }
+
+      .seek::-moz-range-thumb {
+        width: 12px;
+        height: 12px;
+        border: 0;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(183, 160, 255, 0.18);
+      }
+
+      .time-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 11px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 25px;
+        margin-top: 24px;
+      }
+
+      .control-button {
+        display: grid;
+        width: 42px;
+        height: 42px;
+        padding: 0;
+        place-items: center;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        color: #e8e2f5;
+        cursor: pointer;
+        transition:
+          background 160ms ease,
+          transform 160ms ease;
+      }
+
+      .control-button:hover {
+        background: rgba(255, 255, 255, 0.09);
+        transform: scale(1.05);
+      }
+
+      .control-button:focus-visible,
+      .lyric-line:focus-visible,
+      .seek:focus-visible {
+        outline: 2px solid var(--purple);
+        outline-offset: 4px;
+      }
+
+      .play-button {
+        width: 60px;
+        height: 60px;
+        background: #c4b1ff;
+        color: #211a32;
+        box-shadow: 0 8px 26px rgba(150, 117, 230, 0.25);
+      }
+
+      .play-button:hover {
+        background: #d3c5ff;
+      }
+
+      .status {
+        min-height: 18px;
+        margin: 17px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+
+      .lyrics-card {
+        display: flex;
+        min-height: 620px;
+        flex-direction: column;
+        padding: 30px 34px;
+      }
+
+      .lyrics-heading {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        padding-bottom: 19px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .lyrics-heading h2 {
+        margin: 0;
+        font-size: 18px;
+        letter-spacing: -0.02em;
+      }
+
+      .lyrics-heading span {
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .lyrics-list {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: center;
+        gap: 12px;
+        margin: 0;
+        padding: 24px 0;
+        overflow: auto;
+        list-style: none;
+        scrollbar-color: rgba(183, 160, 255, 0.35) transparent;
+        scrollbar-width: thin;
+      }
+
+      .lyric-line {
+        width: fit-content;
+        max-width: 100%;
+        padding: 3px 0;
+        border: 0;
+        background: transparent;
+        color: #817c8d;
+        cursor: pointer;
+        font-size: clamp(16px, 2vw, 20px);
+        font-weight: 600;
+        line-height: 1.45;
+        text-align: left;
+        transition:
+          color 220ms ease,
+          transform 220ms ease;
+      }
+
+      .lyric-line:hover {
+        color: #d6c9ff;
+      }
+
+      .lyric-line.active {
+        color: #fff;
+        transform: translateX(7px);
+      }
+
+      .lyric-line.active::before {
+        display: inline-block;
+        width: 4px;
+        height: 4px;
+        margin: 0 10px 4px 0;
+        border-radius: 50%;
+        background: var(--purple);
+        content: "";
+      }
+
+      .lyrics-hint {
+        margin: auto 0 0;
+        padding-top: 17px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      @media (max-width: 760px) {
+        .page {
+          width: min(560px, calc(100% - 32px));
+          padding-top: 22px;
+        }
+
+        .topbar {
+          margin-bottom: 26px;
+        }
+
+        main {
+          grid-template-columns: 1fr;
+          gap: 18px;
+        }
+
+        .player-card {
+          padding: 24px;
+        }
+
+        .artwork {
+          width: min(100%, 300px);
+          margin: 20px auto 24px;
+        }
+
+        .lyrics-card {
+          min-height: 480px;
+          padding: 24px;
+        }
+
+        .lyrics-list {
+          justify-content: flex-start;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      :root {
+        color-scheme: light;
+        background: #fff8f6;
+        color: #512e3d;
+        --muted: #a77f8b;
+        --purple: #dd7899;
+        --panel: rgba(255, 255, 255, 0.7);
+      }
+
+      body {
+        background:
+          radial-gradient(ellipse at 14% 12%, rgba(255, 210, 218, 0.72), transparent 34rem),
+          radial-gradient(ellipse at 88% 78%, rgba(255, 229, 199, 0.7), transparent 34rem),
+          #fff8f6;
+        color: #512e3d;
+      }
+
+      .page {
+        display: flex;
+        width: min(840px, calc(100% - 40px));
+        min-height: 100svh;
+        flex-direction: column;
+        padding: 26px 0 34px;
+      }
+
+      .topbar {
+        margin-bottom: 12px;
+      }
+
+      .brand {
+        color: #704453;
+      }
+
+      .brand-mark {
+        border-color: rgba(221, 120, 153, 0.22);
+        background: rgba(255, 255, 255, 0.7);
+        color: #d66e91;
+      }
+
+      .collection {
+        color: #a77f8b;
+      }
+
+      main {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      .player-card,
+      .lyrics-card {
+        border: 1px solid rgba(198, 128, 148, 0.12);
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.52);
+        box-shadow: 0 18px 60px rgba(139, 74, 96, 0.08);
+        backdrop-filter: blur(16px);
+      }
+
+      .lyrics-card {
+        position: relative;
+        order: -1;
+        min-height: min(570px, 66svh);
+        flex: 1;
+        overflow: hidden;
+        padding: 32px 36px 22px;
+        text-align: center;
+      }
+
+      .lyrics-card::before,
+      .lyrics-card::after {
+        position: absolute;
+        z-index: 0;
+        color: rgba(220, 112, 147, 0.3);
+        pointer-events: none;
+      }
+
+      .lyrics-card::before {
+        top: 17%;
+        left: 12%;
+        content: "♡";
+        font-size: 34px;
+        animation: float-heart 3.4s ease-in-out infinite;
+      }
+
+      .lyrics-card::after {
+        right: 12%;
+        bottom: 17%;
+        content: "✦";
+        font-size: 22px;
+        animation: twinkle 2.4s ease-in-out infinite;
+      }
+
+      .lyrics-heading {
+        position: relative;
+        z-index: 1;
+        justify-content: center;
+        padding: 0;
+        border: 0;
+      }
+
+      .lyrics-heading h2 {
+        color: #a7657d;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .lyrics-heading span {
+        display: none;
+      }
+
+      .lyrics-list {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        min-height: 300px;
+        flex: 1;
+        place-items: center;
+        gap: 0;
+        padding: 24px 0;
+        overflow: hidden;
+        list-style: none;
+      }
+
+      .lyrics-list li {
+        grid-area: 1 / 1;
+        width: 100%;
+        list-style: none;
+      }
+
+      .lyric-line,
+      .lyric-line.active {
+        width: min(100%, 680px);
+        padding: 14px;
+        border: 0;
+        border-radius: 20px;
+        background: transparent;
+        color: #703d51;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(26px, 5vw, 42px);
+        font-weight: 600;
+        line-height: 1.35;
+        text-align: center;
+        transform: none;
+      }
+
+      .lyric-line:not(.active) {
+        display: none;
+      }
+
+      .lyric-line.active {
+        display: block;
+        animation: lyric-arrive 720ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+
+      .lyric-line.active::before {
+        display: none;
+      }
+
+      .lyrics-hint {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        padding: 0 0 5px;
+        border: 0;
+        color: #ae8491;
+        font-size: 12px;
+      }
+
+      .player-card {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+        gap: 12px 20px;
+        padding: 16px 22px;
+      }
+
+      .player-card .eyebrow,
+      .player-card .artwork,
+      .player-card .status {
+        display: none;
+      }
+
+      .player-card > div:nth-of-type(2) {
+        min-width: 150px;
+        flex: 1;
+      }
+
+      .track-title {
+        color: #704453;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 20px;
+      }
+
+      .track-subtitle {
+        margin-top: 4px;
+        color: #a77f8b;
+        font-size: 12px;
+      }
+
+      .timeline {
+        order: 2;
+        width: 100%;
+        margin: 0;
+      }
+
+      .seek {
+        background: linear-gradient(
+          to right,
+          #d97898 0%,
+          #d97898 var(--progress, 0%),
+          rgba(173, 125, 141, 0.2) var(--progress, 0%),
+          rgba(173, 125, 141, 0.2) 100%
+        );
+      }
+
+      .seek::-webkit-slider-thumb {
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(217, 120, 152, 0.16);
+      }
+
+      .seek::-moz-range-thumb {
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(217, 120, 152, 0.16);
+      }
+
+      .time-labels {
+        color: #a77f8b;
+      }
+
+      .controls {
+        order: 1;
+        gap: 10px;
+        margin: 0;
+      }
+
+      .control-button {
+        color: #9c6579;
+      }
+
+      .control-button:hover {
+        background: rgba(221, 120, 153, 0.1);
+      }
+
+      .play-button,
+      .play-button:hover {
+        background: #e68ca8;
+        color: #fff;
+        box-shadow: 0 7px 20px rgba(196, 94, 130, 0.2);
+      }
+
+      .play-button svg[hidden] {
+        display: none;
+      }
+
+      .control-button:focus-visible,
+      .lyric-line:focus-visible,
+      .seek:focus-visible {
+        outline-color: #d97898;
+      }
+
+      @keyframes lyric-arrive {
+        0% {
+          opacity: 0;
+          transform: translateY(24px) scale(0.92) rotate(-2deg);
+        }
+
+        65% {
+          opacity: 1;
+          transform: translateY(-4px) scale(1.025) rotate(1deg);
+        }
+
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1) rotate(0);
+        }
+      }
+
+      @keyframes float-heart {
+        0%,
+        100% {
+          transform: translateY(0) rotate(-10deg);
+        }
+
+        50% {
+          transform: translateY(-12px) rotate(8deg);
+        }
+      }
+
+      @keyframes twinkle {
+        0%,
+        100% {
+          opacity: 0.45;
+          transform: scale(0.85) rotate(0);
+        }
+
+        50% {
+          opacity: 1;
+          transform: scale(1.2) rotate(18deg);
+        }
+      }
+
+      @media (max-width: 760px) {
+        .page {
+          width: min(560px, calc(100% - 28px));
+          min-height: 100svh;
+          padding: 18px 0 22px;
+        }
+
+        .topbar {
+          margin-bottom: 8px;
+        }
+
+        main {
+          gap: 12px;
+        }
+
+        .lyrics-card {
+          min-height: min(500px, 58svh);
+          padding: 28px 18px 20px;
+        }
+
+        .lyrics-list {
+          min-height: 260px;
+        }
+
+        .lyrics-card::before {
+          top: 15%;
+          left: 7%;
+          font-size: 27px;
+        }
+
+        .lyrics-card::after {
+          right: 7%;
+          bottom: 14%;
+        }
+
+        .player-card {
+          gap: 12px;
+          padding: 14px 16px;
+        }
+
+        .player-card > div:nth-of-type(2) {
+          min-width: 100px;
+        }
+
+        .play-button {
+          width: 50px;
+          height: 50px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .lyrics-card::before,
+        .lyrics-card::after,
+        .lyric-line.active,
+        .dream-particles span {
+          animation: none;
+        }
+      }
+
+      :root {
+        color-scheme: light;
+        background: #fffaf1;
+        color: #59464c;
+        --muted: #a68d91;
+        --purple: #f19ab2;
+      }
+
+      body {
+        background:
+          radial-gradient(ellipse at 12% 10%, rgba(255, 215, 187, 0.72), transparent 34rem),
+          radial-gradient(ellipse at 88% 82%, rgba(199, 236, 218, 0.72), transparent 34rem),
+          #fffaf1;
+        color: #59464c;
+      }
+
+      .brand,
+      .track-title {
+        color: #684951;
+      }
+
+      .brand-mark {
+        border-color: rgba(235, 160, 164, 0.3);
+        background: rgba(255, 255, 255, 0.8);
+        color: #dc8798;
+      }
+
+      .collection,
+      .track-subtitle,
+      .time-labels {
+        color: #a68d91;
+      }
+
+      .player-card,
+      .lyrics-card {
+        border-color: rgba(200, 154, 145, 0.22);
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow:
+          0 20px 60px rgba(151, 110, 97, 0.1),
+          inset 0 1px rgba(255, 255, 255, 0.9);
+      }
+
+      .lyrics-card {
+        background:
+          radial-gradient(ellipse at 50% 45%, rgba(255, 239, 211, 0.92), transparent 58%),
+          radial-gradient(circle at 20% 24%, rgba(255, 178, 149, 0.3) 0 1px, transparent 2px),
+          radial-gradient(circle at 81% 72%, rgba(125, 193, 159, 0.35) 0 1.5px, transparent 3px),
+          radial-gradient(circle at 72% 19%, rgba(255, 211, 115, 0.42) 0 1px, transparent 2px),
+          linear-gradient(145deg, #fff8e9, #fff0ec 58%, #f1fbf3);
+      }
+
+      .lyrics-card::before,
+      .lyrics-card::after {
+        border-color: rgba(227, 151, 144, 0.25);
+        filter: drop-shadow(0 0 8px rgba(244, 186, 153, 0.12));
+      }
+
+      .lyrics-card::after {
+        border-color: rgba(133, 188, 155, 0.25);
+      }
+
+      .lyrics-heading h2 {
+        color: #aa7a71;
+      }
+
+      .lyric-line,
+      .lyric-line.active {
+        color: #684951;
+        text-shadow:
+          0 2px 0 rgba(255, 255, 255, 0.85),
+          0 8px 26px rgba(198, 129, 111, 0.12);
+      }
+
+      .lyric-preview {
+        color: #9c8588;
+      }
+
+      .player-card {
+        background: rgba(255, 255, 255, 0.88);
+      }
+
+      .seek {
+        background: linear-gradient(
+          to right,
+          #e78d9f 0%,
+          #e78d9f var(--progress, 0%),
+          rgba(166, 141, 145, 0.2) var(--progress, 0%),
+          rgba(166, 141, 145, 0.2) 100%
+        );
+      }
+
+      .control-button {
+        color: #a76f7c;
+      }
+
+      .control-button:hover {
+        background: rgba(231, 141, 159, 0.12);
+      }
+
+      .play-button,
+      .play-button:hover {
+        background: #e88fa4;
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(202, 119, 137, 0.24);
+      }
+
+      .control-button:focus-visible,
+      .lyric-line:focus-visible,
+      .seek:focus-visible {
+        outline-color: #db879a;
+      }
+
+      :root {
+        color-scheme: light;
+        background: #fffaf1;
+        color: #59464c;
+        --muted: #a68d91;
+        --purple: #f19ab2;
+      }
+
+      body {
+        background:
+          radial-gradient(ellipse at 12% 10%, rgba(255, 215, 187, 0.72), transparent 34rem),
+          radial-gradient(ellipse at 88% 82%, rgba(199, 236, 218, 0.72), transparent 34rem),
+          #fffaf1;
+        color: #59464c;
+      }
+
+      .brand,
+      .track-title {
+        color: #684951;
+      }
+
+      .brand-mark {
+        border-color: rgba(235, 160, 164, 0.3);
+        background: rgba(255, 255, 255, 0.8);
+        color: #dc8798;
+      }
+
+      .collection,
+      .track-subtitle,
+      .time-labels {
+        color: #a68d91;
+      }
+
+      .player-card,
+      .lyrics-card {
+        border-color: rgba(200, 154, 145, 0.22);
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow:
+          0 20px 60px rgba(151, 110, 97, 0.1),
+          inset 0 1px rgba(255, 255, 255, 0.9);
+      }
+
+      .lyrics-card {
+        background:
+          radial-gradient(ellipse at 50% 45%, rgba(255, 239, 211, 0.92), transparent 58%),
+          radial-gradient(circle at 20% 24%, rgba(255, 178, 149, 0.3) 0 1px, transparent 2px),
+          radial-gradient(circle at 81% 72%, rgba(125, 193, 159, 0.35) 0 1.5px, transparent 3px),
+          radial-gradient(circle at 72% 19%, rgba(255, 211, 115, 0.42) 0 1px, transparent 2px),
+          linear-gradient(145deg, #fff8e9, #fff0ec 58%, #f1fbf3);
+      }
+
+      .lyrics-card::before,
+      .lyrics-card::after {
+        border-color: rgba(227, 151, 144, 0.25);
+        filter: drop-shadow(0 0 8px rgba(244, 186, 153, 0.12));
+      }
+
+      .lyrics-card::after {
+        border-color: rgba(133, 188, 155, 0.25);
+      }
+
+      .lyrics-heading h2 {
+        color: #aa7a71;
+      }
+
+      .lyric-line,
+      .lyric-line.active {
+        color: #684951;
+        text-shadow:
+          0 2px 0 rgba(255, 255, 255, 0.85),
+          0 8px 26px rgba(198, 129, 111, 0.12);
+      }
+
+      .lyric-preview {
+        position: relative;
+        z-index: 1;
+        flex: 0 0 auto;
+        margin: 0 0 34px;
+        color: #9c8588;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(17px, 2.8vw, 22px);
+        font-style: italic;
+        line-height: 1.5;
+        opacity: 0.48;
+        animation: preview-arrive 500ms ease both;
+      }
+
+      .lyric-preview[hidden] {
+        display: none;
+      }
+
+      .player-card {
+        background: rgba(255, 255, 255, 0.88);
+      }
+
+      .seek {
+        background: linear-gradient(
+          to right,
+          #e78d9f 0%,
+          #e78d9f var(--progress, 0%),
+          rgba(166, 141, 145, 0.2) var(--progress, 0%),
+          rgba(166, 141, 145, 0.2) 100%
+        );
+      }
+
+      .control-button {
+        color: #a76f7c;
+      }
+
+      .control-button:hover {
+        background: rgba(231, 141, 159, 0.12);
+      }
+
+      .play-button,
+      .play-button:hover {
+        background: #e88fa4;
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(202, 119, 137, 0.24);
+      }
+
+      .control-button:focus-visible,
+      .lyric-line:focus-visible,
+      .seek:focus-visible {
+        outline-color: #db879a;
+      }
+
+      @keyframes preview-arrive {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+
+        to {
+          opacity: 0.48;
+          transform: translateY(0);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .lyric-preview {
+          animation: none;
+        }
+      }
+
+      :root {
+        color-scheme: dark;
+        background: #100812;
+        color: #fff4f8;
+        --muted: #bc9eae;
+        --purple: #ff9fc9;
+      }
+
+      body {
+        background:
+          radial-gradient(ellipse at 50% 45%, rgba(116, 22, 75, 0.3), transparent 34rem),
+          radial-gradient(ellipse at 10% 100%, rgba(55, 17, 72, 0.35), transparent 32rem),
+          #100812;
+        color: #fff4f8;
+      }
+
+      .brand,
+      .track-title {
+        color: #fff4f8;
+      }
+
+      .brand-mark {
+        border-color: rgba(255, 159, 201, 0.24);
+        background: rgba(255, 159, 201, 0.08);
+        color: #ff9fc9;
+      }
+
+      .collection,
+      .track-subtitle,
+      .time-labels {
+        color: #bc9eae;
+      }
+
+      .player-card,
+      .lyrics-card {
+        border-color: rgba(255, 166, 203, 0.13);
+        background: rgba(28, 12, 29, 0.78);
+        box-shadow:
+          0 24px 80px rgba(0, 0, 0, 0.3),
+          inset 0 1px rgba(255, 255, 255, 0.035);
+      }
+
+      .lyrics-card {
+        background:
+          radial-gradient(ellipse at 50% 45%, rgba(155, 38, 99, 0.2), transparent 56%),
+          radial-gradient(circle at 20% 24%, rgba(255, 172, 92, 0.12) 0 1px, transparent 2px),
+          radial-gradient(circle at 81% 72%, rgba(255, 150, 195, 0.19) 0 1.5px, transparent 3px),
+          radial-gradient(circle at 72% 19%, rgba(255, 213, 147, 0.2) 0 1px, transparent 2px),
+          linear-gradient(145deg, rgba(38, 13, 35, 0.95), rgba(17, 9, 25, 0.98));
+      }
+
+      .lyrics-card::before,
+      .lyrics-card::after {
+        top: 50%;
+        left: 50%;
+        width: min(58vw, 460px);
+        height: min(38vw, 300px);
+        border: 1px solid rgba(255, 116, 178, 0.2);
+        border-radius: 50%;
+        content: "";
+        transform: translate(-50%, -50%) rotate(-24deg);
+        animation: orbit-glow 7s ease-in-out infinite;
+      }
+
+      .lyrics-card::after {
+        width: min(48vw, 380px);
+        height: min(54vw, 420px);
+        border-color: rgba(255, 199, 130, 0.15);
+        transform: translate(-50%, -50%) rotate(35deg);
+        animation-delay: -3.5s;
+      }
+
+      .lyrics-heading h2 {
+        color: #ffd1e1;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 15px;
+        font-style: italic;
+        font-weight: 400;
+        letter-spacing: 0.04em;
+        text-transform: none;
+      }
+
+      .lyrics-list {
+        min-height: 340px;
+      }
+
+      .lyric-line,
+      .lyric-line.active {
+        color: #fff2f8;
+        font-size: clamp(29px, 5vw, 48px);
+        font-style: italic;
+        text-shadow:
+          0 0 12px rgba(255, 186, 218, 0.42),
+          0 0 42px rgba(255, 87, 161, 0.25);
+      }
+
+      .lyric-line.active {
+        animation:
+          lyric-arrive 760ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
+          lyric-breathe 2.8s ease-in-out 760ms infinite;
+      }
+
+      .lyrics-hint {
+        color: #a98d9e;
+      }
+
+      .dream-particles {
+        position: absolute;
+        z-index: 1;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .dream-particles span {
+        position: absolute;
+        color: #ffd1e1;
+        text-shadow: 0 0 12px rgba(255, 114, 173, 0.8);
+        animation: float-particle 5s ease-in-out infinite;
+      }
+
+      .dream-particles span:nth-child(1) {
+        top: 24%;
+        left: 15%;
+        font-size: 17px;
+      }
+
+      .dream-particles span:nth-child(2) {
+        top: 66%;
+        left: 21%;
+        color: #ffc98c;
+        font-size: 11px;
+        animation-delay: -2s;
+      }
+
+      .dream-particles span:nth-child(3) {
+        top: 26%;
+        right: 17%;
+        font-size: 12px;
+        animation-delay: -3.2s;
+      }
+
+      .dream-particles span:nth-child(4) {
+        right: 22%;
+        bottom: 23%;
+        color: #ffc98c;
+        font-size: 18px;
+        animation-delay: -1s;
+      }
+
+      .dream-particles span:nth-child(5) {
+        top: 48%;
+        right: 10%;
+        font-size: 9px;
+        animation-delay: -4s;
+      }
+
+      .player-card {
+        border-color: rgba(255, 166, 203, 0.12);
+        background: rgba(28, 12, 29, 0.88);
+      }
+
+      .seek {
+        background: linear-gradient(
+          to right,
+          #ff8fbd 0%,
+          #ff8fbd var(--progress, 0%),
+          rgba(255, 255, 255, 0.14) var(--progress, 0%),
+          rgba(255, 255, 255, 0.14) 100%
+        );
+      }
+
+      .control-button {
+        color: #ffd4e5;
+      }
+
+      .play-button,
+      .play-button:hover {
+        background: #e85391;
+        color: #fff;
+        box-shadow: 0 0 28px rgba(232, 83, 145, 0.36);
+      }
+
+      .control-button:hover {
+        background: rgba(255, 159, 201, 0.12);
+      }
+
+      .player-card .status {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+      }
+
+      @keyframes float-particle {
+        0%,
+        100% {
+          opacity: 0.28;
+          transform: translateY(3px) rotate(-8deg) scale(0.8);
+        }
+
+        50% {
+          opacity: 1;
+          transform: translateY(-13px) rotate(12deg) scale(1.15);
+        }
+      }
+
+      @keyframes orbit-glow {
+        0%,
+        100% {
+          opacity: 0.55;
+          filter: drop-shadow(0 0 5px rgba(255, 96, 165, 0.12));
+        }
+
+        50% {
+          opacity: 1;
+          filter: drop-shadow(0 0 14px rgba(255, 96, 165, 0.25));
+        }
+      }
+
+      @keyframes lyric-breathe {
+        0%,
+        100% {
+          text-shadow:
+            0 0 12px rgba(255, 186, 218, 0.35),
+            0 0 38px rgba(255, 87, 161, 0.2);
+        }
+
+        50% {
+          text-shadow:
+            0 0 18px rgba(255, 186, 218, 0.65),
+            0 0 52px rgba(255, 87, 161, 0.38);
+        }
+      }
+
+      @media (max-width: 760px) {
+        .lyrics-list {
+          min-height: 280px;
+        }
+
+        .lyrics-card::before {
+          width: 70vw;
+          height: 48vw;
+        }
+
+        .lyrics-card::after {
+          width: 60vw;
+          height: 64vw;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .lyrics-card::before,
+        .lyrics-card::after,
+        .lyric-line.active,
+        .dream-particles span {
+          animation: none;
+        }
+      }
+      :root {
+        color-scheme: light;
+        background: #fffaf1;
+        color: #59464c;
+        --muted: #a68d91;
+        --purple: #f19ab2;
+      }
+
+      body {
+        background:
+          radial-gradient(ellipse at 12% 10%, rgba(255, 215, 187, 0.72), transparent 34rem),
+          radial-gradient(ellipse at 88% 82%, rgba(199, 236, 218, 0.72), transparent 34rem),
+          #fffaf1;
+        color: #59464c;
+      }
+
+      .brand,
+      .track-title,
+      .lyric-line,
+      .lyric-line.active {
+        color: #684951;
+      }
+
+      .brand-mark {
+        border-color: rgba(235, 160, 164, 0.3);
+        background: rgba(255, 255, 255, 0.8);
+        color: #dc8798;
+      }
+
+      .collection,
+      .track-subtitle,
+      .time-labels {
+        color: #a68d91;
+      }
+
+      .player-card,
+      .lyrics-card {
+        border-color: rgba(200, 154, 145, 0.22);
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 20px 60px rgba(151, 110, 97, 0.1);
+      }
+
+      .lyrics-card {
+        background:
+          radial-gradient(ellipse at 50% 45%, rgba(255, 239, 211, 0.92), transparent 58%),
+          linear-gradient(145deg, #fff8e9, #fff0ec 58%, #f1fbf3);
+      }
+
+      .lyrics-card::before {
+        border-color: rgba(227, 151, 144, 0.25);
+      }
+
+      .lyrics-card::after {
+        border-color: rgba(133, 188, 155, 0.25);
+      }
+
+      .lyrics-heading h2 {
+        color: #aa7a71;
+      }
+
+      .lyric-line,
+      .lyric-line.active {
+        text-shadow: 0 8px 26px rgba(198, 129, 111, 0.12);
+      }
+
+      .lyric-preview {
+        color: #9c8588;
+      }
+
+      .player-card {
+        background: rgba(255, 255, 255, 0.9);
+      }
+
+      .seek {
+        background: linear-gradient(
+          to right,
+          #e78d9f 0%,
+          #e78d9f var(--progress, 0%),
+          rgba(166, 141, 145, 0.2) var(--progress, 0%),
+          rgba(166, 141, 145, 0.2) 100%
+        );
+      }
+
+      .control-button {
+        color: #a76f7c;
+      }
+
+      .control-button:hover {
+        background: rgba(231, 141, 159, 0.12);
+      }
+
+      .play-button,
+      .play-button:hover {
+        background: #e88fa4;
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(202, 119, 137, 0.24);
+      }
+
+      .control-button:focus-visible,
+      .lyric-line:focus-visible,
+      .seek:focus-visible {
+        outline-color: #db879a;
+      }
+
+      :root {
+        color-scheme: light;
+        background: #fff8ee;
+        color: #70575b;
+        --muted: #aa898c;
+        --purple: #ee9bab;
+      }
+
+      body {
+        background: #fff8ee;
+        color: #70575b;
+      }
+
+      .player-card,
+      .lyrics-card {
+        border: 2px solid #f3d9d3;
+        background: #fffdf9;
+        box-shadow: none;
+        backdrop-filter: none;
+      }
+
+      .lyrics-card {
+        background: #fffaf3;
+      }
+
+      .lyrics-card::before,
+      .lyrics-card::after {
+        top: 24%;
+        left: 14%;
+        width: auto;
+        height: auto;
+        border: 0;
+        border-radius: 0;
+        color: #ef9fac;
+        content: "♡";
+        font-size: 30px;
+        filter: none;
+        opacity: 0.75;
+        transform: none;
+        animation: float-heart 3.4s ease-in-out infinite;
+      }
+
+      .lyrics-card::after {
+        top: auto;
+        right: 14%;
+        bottom: 23%;
+        left: auto;
+        color: #a9cdb0;
+        content: "✿";
+        font-size: 25px;
+        animation-delay: -1.5s;
+      }
+
+      .lyrics-heading h2 {
+        color: #b9827c;
+        font-family: inherit;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+      }
+
+      .lyric-line,
+      .lyric-line.active {
+        color: #70575b;
+        text-shadow: none;
+      }
+
+      .lyric-line.active {
+        animation: lyric-arrive 650ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+
+      .lyric-preview {
+        color: #aa898c;
+        text-shadow: none;
+      }
+
+      .dream-particles span {
+        color: #ef9fac;
+        text-shadow: none;
+      }
+
+      .dream-particles span:nth-child(2),
+      .dream-particles span:nth-child(4) {
+        color: #a9cdb0;
+      }
+
+      .dream-particles span:nth-child(3) {
+        color: #efc17d;
+      }
+
+      .track-title {
+        color: #70575b;
+      }
+
+      .play-button,
+      .play-button:hover {
+        background: #ef9fac;
+        box-shadow: none;
+      }
+
+      .control-button {
+        color: #b47c84;
+      }
+
+      .control-button:hover {
+        background: #fff0ed;
+      }
+
+      .seek {
+        background: linear-gradient(
+          to right,
+          #ef9fac 0%,
+          #ef9fac var(--progress, 0%),
+          #f0e5df var(--progress, 0%),
+          #f0e5df 100%
+        );
+      }
+
+      .seek::-webkit-slider-thumb {
+        box-shadow: none;
+      }
+
+      .seek::-moz-range-thumb {
+        box-shadow: none;
+      }
+
+      .lyrics-list {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .lyrics-list li {
+        grid-column: 1;
+        width: 100%;
+      }
+
+      .lyric-line,
+      .lyric-line.active {
+        display: block;
+        width: min(100%, 680px);
+        margin-inline: auto;
+        text-align: center;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .lyrics-card::before,
+        .lyrics-card::after,
+        .dream-particles span,
+        .lyric-line.active {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <main>
+        <section class="player-card" aria-label="Pemutar lagu">
+          <div class="artwork" role="img" aria-label="Sampul abstrak bernuansa ungu">
+            <span class="artwork-note">play it your way</span>
+          </div>
+          <div>
+            <h1 class="track-title">Penyihir - Ghea Indrawari</h1>
+          </div>
+
+          <div class="timeline">
+            <label class="sr-only" for="seek">Posisi lagu</label>
+            <input
+              class="seek"
+              id="seek"
+              type="range"
+              min="0"
+              max="100"
+              value="0"
+              step="0.1"
+              aria-label="Posisi lagu"
+            />
+            <div class="time-labels">
+              <span id="current-time">0:00</span>
+              <span id="duration">0:00</span>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="control-button" id="back-button" type="button" aria-label="Mundur 10 detik">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 8V4m0 4h4M4.8 8a8 8 0 1 1-1 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M12.5 9.5 10 11v-1m2.5 4v-4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <button class="control-button play-button" id="play-button" type="button" aria-label="Putar lagu">
+              <svg id="play-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5.8c0-.8.9-1.3 1.6-.9l9.1 5.2a1 1 0 0 1 0 1.8l-9.1 5.2a1.05 1.05 0 0 1-1.6-.9V5.8Z" />
+              </svg>
+              <svg id="pause-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" hidden>
+                <path d="M7 5.5A1.5 1.5 0 0 1 8.5 4h1A1.5 1.5 0 0 1 11 5.5v13A1.5 1.5 0 0 1 9.5 20h-1A1.5 1.5 0 0 1 7 18.5v-13Zm6 0A1.5 1.5 0 0 1 14.5 4h1A1.5 1.5 0 0 1 17 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5v-13Z" />
+              </svg>
+            </button>
+            <button class="control-button" id="forward-button" type="button" aria-label="Maju 10 detik">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M20 8V4m0 4h-4m3.2 0a8 8 0 1 0 1 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="m11.5 9.5 2.5 1.5v-1m-2.5 4V9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+          <p class="status" id="status" role="status" aria-live="polite">Siap diputar</p>
+          <audio id="audio" preload="metadata">
+            <source src="./lagu.mp3" type="audio/mpeg" />
+            Browser kamu belum mendukung pemutar audio.
+          </audio>
+        </section>
+
+        <section class="lyrics-card" aria-labelledby="lyrics-title">
+          <div class="dream-particles" aria-hidden="true">
+            <span>✦</span>
+            <span>✧</span>
+            <span>♡</span>
+            <span>✦</span>
+            <span>✧</span>
+          </div>
+          <div class="lyrics-heading">
+            <h2 id="lyrics-title">Lirik</h2>
+            <span>♡</span>
+          </div>
+          <ol class="lyrics-list" id="lyrics-list">
+            <li><button class="lyric-line" type="button" data-time="0">Terobrak-abrik seluruh akal sehatku</button></li>
+            <li><button class="lyric-line" type="button" data-time="4">Sesungguhnya ini tak masuk logikaku</button></li>
+            <li><button class="lyric-line" type="button" data-time="8.44">Mengapa seperti</button></li>
+            <li><button class="lyric-line" type="button" data-time="10.88">Aku yang gila</button></li>
+            <li><button class="lyric-line" type="button" data-time="15">Tergila-gila padamu</button></li>
+            <li><button class="lyric-line" type="button" data-time="17.9">Kau taruh sihir apa padaku</button></li>
+            <li><button class="lyric-line" type="button" data-time="22">Hingga bertekuk lutut aku di hadapmu</button></li>
+            <li><button class="lyric-line" type="button" data-time="27.67">Aku yang gila</button></li>
+            <li><button class="lyric-line" type="button" data-time="31">Tergila-gila padamu</button></li>
+            <li><button class="lyric-line" type="button" data-time="33.9">Kau taruh sihir apa padaku</button></li>
+            <li><button class="lyric-line" type="button" data-time="38">Hingga tertunduk aku</button></li>
+            <li><button class="lyric-line" type="button" data-time="41.87">Merana tanpa belaimu</button></li>
+          </ol>
+          <p class="lyric-preview" id="lyric-preview" aria-live="polite" hidden></p>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const audio = document.querySelector("#audio");
+      const playButton = document.querySelector("#play-button");
+      const playIcon = document.querySelector("#play-icon");
+      const pauseIcon = document.querySelector("#pause-icon");
+      const seek = document.querySelector("#seek");
+      const currentTimeLabel = document.querySelector("#current-time");
+      const durationLabel = document.querySelector("#duration");
+      const status = document.querySelector("#status");
+      const lyricLines = [...document.querySelectorAll(".lyric-line")];
+      const lyricPreview = document.querySelector("#lyric-preview");
+      const fadeDuration = 4;
+      let lastActiveIndex = -1;
+      let hasStarted = false;
+      let fadeAnimationFrame = null;
+
+      function formatTime(seconds) {
+        if (!Number.isFinite(seconds)) return "0:00";
+        const minutes = Math.floor(seconds / 60);
+        const remainder = Math.floor(seconds % 60).toString().padStart(2, "0");
+        return `${minutes}:${remainder}`;
+      }
+
+      function updatePlayback() {
+        const duration = audio.duration;
+        const currentTime = audio.currentTime;
+        currentTimeLabel.textContent = formatTime(currentTime);
+
+        if (Number.isFinite(duration) && duration > 0) {
+          seek.value = String((currentTime / duration) * 100);
+          seek.style.setProperty("--progress", `${seek.value}%`);
+        }
+
+        let activeIndex = -1;
+        lyricLines.forEach((line, index) => {
+          if (Number(line.dataset.time) <= currentTime) activeIndex = index;
+          line.classList.remove("active");
+          line.removeAttribute("aria-current");
+        });
+
+        if (activeIndex >= 0) {
+          const activeLine = lyricLines[activeIndex];
+          activeLine.classList.add("active");
+          activeLine.setAttribute("aria-current", "true");
+          if (activeIndex !== lastActiveIndex) {
+            activeLine.scrollIntoView({ block: "nearest", behavior: "smooth" });
+          }
+        }
+
+        const nextLine = lyricLines[activeIndex + 1];
+        lyricPreview.textContent = nextLine?.textContent ?? "";
+        lyricPreview.hidden = !hasStarted || !nextLine;
+        lastActiveIndex = activeIndex;
+      }
+
+      function updateAudioFade() {
+        if (!Number.isFinite(audio.duration) || audio.duration <= 0) {
+          audio.volume = 1;
+          return;
+        }
+
+        const remaining = audio.duration - audio.currentTime;
+        audio.volume = Math.min(1, Math.max(0, remaining / fadeDuration));
+      }
+
+      function animateAudioFade() {
+        updateAudioFade();
+        if (!audio.paused && !audio.ended) {
+          fadeAnimationFrame = requestAnimationFrame(animateAudioFade);
+        } else {
+          fadeAnimationFrame = null;
+        }
+      }
+
+      function startAudioFade() {
+        if (fadeAnimationFrame !== null) {
+          cancelAnimationFrame(fadeAnimationFrame);
+        }
+        animateAudioFade();
+      }
+
+      function stopAudioFade() {
+        if (fadeAnimationFrame !== null) {
+          cancelAnimationFrame(fadeAnimationFrame);
+          fadeAnimationFrame = null;
+        }
+        updateAudioFade();
+      }
+
+      function updatePlayButton() {
+        const isPlaying = !audio.paused;
+        playIcon.toggleAttribute("hidden", isPlaying);
+        pauseIcon.toggleAttribute("hidden", !isPlaying);
+        playButton.setAttribute("aria-label", isPlaying ? "Jeda lagu" : "Putar lagu");
+      }
+
+      playButton.addEventListener("click", async () => {
+        if (audio.paused) {
+          try {
+            await audio.play();
+            status.textContent = "Sedang diputar";
+          } catch (error) {
+            status.textContent = "Lagu tidak dapat diputar. Coba muat ulang halaman.";
+            console.error("Audio playback failed:", error);
+          }
+        } else {
+          audio.pause();
+          status.textContent = "Lagu dijeda";
+        }
+      });
+
+      document.querySelector("#back-button").addEventListener("click", () => {
+        audio.currentTime = Math.max(0, audio.currentTime - 10);
+      });
+
+      document.querySelector("#forward-button").addEventListener("click", () => {
+        const end = Number.isFinite(audio.duration) ? audio.duration : audio.currentTime + 10;
+        audio.currentTime = Math.min(end, audio.currentTime + 10);
+      });
+
+      seek.addEventListener("input", () => {
+        if (Number.isFinite(audio.duration)) {
+          audio.currentTime = (Number(seek.value) / 100) * audio.duration;
+        }
+      });
+
+      lyricLines.forEach((line) => {
+        line.addEventListener("click", () => {
+          audio.currentTime = Number(line.dataset.time);
+          audio.play().catch((error) => {
+            status.textContent = "Lagu tidak dapat diputar. Coba tekan tombol putar.";
+            console.error("Audio playback failed after lyric seek:", error);
+          });
+        });
+      });
+
+      audio.addEventListener("loadedmetadata", () => {
+        durationLabel.textContent = formatTime(audio.duration);
+        status.textContent = "Siap diputar";
+        updateAudioFade();
+        updatePlayback();
+      });
+      audio.addEventListener("timeupdate", updatePlayback);
+      audio.addEventListener("play", () => {
+        hasStarted = true;
+        updatePlayback();
+        startAudioFade();
+      });
+      audio.addEventListener("play", updatePlayButton);
+      audio.addEventListener("pause", () => {
+        stopAudioFade();
+        updatePlayButton();
+      });
+      audio.addEventListener("ended", () => {
+        status.textContent = "Lagu selesai";
+        updatePlayButton();
+      });
+      audio.addEventListener("error", () => {
+        status.textContent = "File lagu tidak dapat dimuat. Pastikan lagu.mp3 tersedia.";
+      });
+
+      updatePlayback();
+      updatePlayButton();
+    </script>
+  </body>
+</html>
